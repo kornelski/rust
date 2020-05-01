@@ -139,9 +139,10 @@ mod imp {
     }
 
     unsafe fn get_stackp() -> *mut libc::c_void {
+        let page_size = page_size();
         let stackp = mmap(
             ptr::null_mut(),
-            SIGSTKSZ + page_size(),
+            SIGSTKSZ + page_size,
             PROT_READ | PROT_WRITE,
             MAP_PRIVATE | MAP_ANON,
             -1,
@@ -150,11 +151,11 @@ mod imp {
         if stackp == MAP_FAILED {
             panic!("failed to allocate an alternative stack");
         }
-        let guard_result = libc::mprotect(stackp, page_size(), PROT_NONE);
+        let guard_result = libc::mprotect(stackp, page_size, PROT_NONE);
         if guard_result != 0 {
             panic!("failed to set up alternative stack guard page");
         }
-        stackp.add(page_size())
+        stackp.add(page_size)
     }
 
     #[cfg(any(
@@ -203,9 +204,10 @@ mod imp {
                 ss_size: SIGSTKSZ,
             };
             sigaltstack(&stack, ptr::null_mut());
+            let page_size = page_size();
             // We know from `get_stackp` that the alternate stack we installed is part of a mapping
             // that started one page earlier, so walk back a page and unmap from there.
-            munmap(handler._data.sub(page_size()), SIGSTKSZ + page_size());
+            munmap(handler._data.sub(page_size), SIGSTKSZ + page_size);
         }
     }
 }

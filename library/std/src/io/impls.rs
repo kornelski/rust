@@ -474,20 +474,31 @@ impl Write for &mut [u8] {
     }
 }
 
+const OOM_ERROR_MSG: &str =
+    "Out Of Memory. This panic may become an io::Error in the future (#84612)";
+
 /// Write is implemented for `Vec<u8>` by appending to the vector.
 /// The vector will grow as needed.
+///
+/// # Panics
+///
+/// In case of allocation error or capacity overflow, write operations will panic.
+/// The panicking behavior is not guaranteed. In the future, it may become
+/// a regular `io::Error`.
 #[stable(feature = "rust1", since = "1.0.0")]
 impl<A: Allocator> Write for Vec<u8, A> {
     #[inline]
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        self.try_reserve(buf.len()).expect(OOM_ERROR_MSG);
         self.extend_from_slice(buf);
         Ok(buf.len())
     }
 
     #[inline]
     fn write_vectored(&mut self, bufs: &[IoSlice<'_>]) -> io::Result<usize> {
-        let len = bufs.iter().map(|b| b.len()).sum();
-        self.reserve(len);
+        let len =
+            bufs.iter().try_fold(0usize, |len, b| len.checked_add(b.len())).expect(OOM_ERROR_MSG);
+        self.try_reserve(len).expect(OOM_ERROR_MSG);
         for buf in bufs {
             self.extend_from_slice(buf);
         }
@@ -501,6 +512,7 @@ impl<A: Allocator> Write for Vec<u8, A> {
 
     #[inline]
     fn write_all(&mut self, buf: &[u8]) -> io::Result<()> {
+        self.try_reserve(buf.len()).expect(OOM_ERROR_MSG);
         self.extend_from_slice(buf);
         Ok(())
     }

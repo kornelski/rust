@@ -524,6 +524,8 @@ impl CStr {
     /// ```
     /// use std::ffi::CStr;
     ///
+    /// assert_eq!(c"foo".count_bytes(), 3);
+    ///
     /// let cstr = CStr::from_bytes_with_nul(b"foo\0").unwrap();
     /// assert_eq!(cstr.count_bytes(), 3);
     ///
@@ -611,8 +613,7 @@ impl CStr {
     /// ```
     /// use std::ffi::CStr;
     ///
-    /// let cstr = CStr::from_bytes_with_nul(b"foo\0").expect("CStr::from_bytes_with_nul failed");
-    /// assert_eq!(cstr.to_bytes_with_nul(), b"foo\0");
+    /// assert_eq!(c"has sentinel".to_bytes_with_nul(), b"has sentinel\0");
     /// ```
     #[inline]
     #[must_use = "this returns the result of the operation, \

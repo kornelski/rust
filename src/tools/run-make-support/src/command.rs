@@ -237,7 +237,7 @@ impl CompletedProcess {
     #[must_use]
     #[track_caller]
     pub fn invalid_stdout_utf8(&self) -> String {
-        String::from_utf8_lossy(&self.output.stdout.clone()).to_string()
+        String::from_utf8_lossy(&self.output.stdout.clone()).into_owned()
     }
 
     #[must_use]
@@ -255,7 +255,7 @@ impl CompletedProcess {
     #[must_use]
     #[track_caller]
     pub fn invalid_stderr_utf8(&self) -> String {
-        String::from_utf8_lossy(&self.output.stderr.clone()).to_string()
+        String::from_utf8_lossy(&self.output.stderr.clone()).into_owned()
     }
 
     #[must_use]

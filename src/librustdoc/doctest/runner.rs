@@ -127,7 +127,7 @@ mod __doctest_mod {{
             .output()
             .expect(\"failed to run command\");
         if !out.status.success() {{
-            Err(String::from_utf8_lossy(&out.stderr).to_string())
+            Err(String::from_utf8_lossy(&out.stderr).into_owned())
         }} else {{
             Ok(())
         }}

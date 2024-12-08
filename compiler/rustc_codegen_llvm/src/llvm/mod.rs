@@ -320,7 +320,7 @@ pub fn last_error() -> Option<String> {
             None
         } else {
             let err = CStr::from_ptr(cstr).to_bytes();
-            let err = String::from_utf8_lossy(err).to_string();
+            let err = String::from_utf8_lossy(err).into_owned();
             libc::free(cstr as *mut _);
             Some(err)
         }

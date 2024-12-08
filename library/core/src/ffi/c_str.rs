@@ -83,7 +83,7 @@ use crate::{fmt, ops, slice, str};
 /// fn my_string_safe() -> String {
 ///     let cstr = unsafe { CStr::from_ptr(my_string()) };
 ///     // Get copy-on-write Cow<'_, str>, then guarantee a freshly-owned String allocation
-///     String::from_utf8_lossy(cstr.to_bytes()).to_string()
+///     String::from_utf8_lossy(cstr.to_bytes()).into_owned()
 /// }
 ///
 /// println!("string: {}", my_string_safe());

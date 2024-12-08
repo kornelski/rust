@@ -282,7 +282,7 @@ impl CodegenResults {
         version_array.copy_from_slice(&data[..4]);
         if u32::from_be_bytes(version_array) != RLINK_VERSION {
             return Err(CodegenErrors::EncodingVersionMismatch {
-                version_array: String::from_utf8_lossy(&version_array).to_string(),
+                version_array: String::from_utf8_lossy(&version_array).into_owned(),
                 rlink_version: RLINK_VERSION,
             });
         }

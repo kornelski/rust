@@ -45,7 +45,7 @@ impl Diff {
     pub fn expected_file<P: AsRef<Path>>(&mut self, path: P) -> &mut Self {
         let path = path.as_ref();
         let content = fs::read_to_string(path);
-        let name = path.to_string_lossy().to_string();
+        let name = path.to_string_lossy().into_owned();
 
         self.expected_file = Some(path.into());
         self.expected = Some(content);
@@ -55,7 +55,7 @@ impl Diff {
 
     /// Specify the expected output for the diff from a given text string.
     pub fn expected_text<T: AsRef<[u8]>>(&mut self, name: &str, text: T) -> &mut Self {
-        self.expected = Some(String::from_utf8_lossy(text.as_ref()).to_string());
+        self.expected = Some(String::from_utf8_lossy(text.as_ref()).into_owned());
         self.expected_name = Some(name.to_string());
         self
     }
@@ -64,7 +64,7 @@ impl Diff {
     pub fn actual_file<P: AsRef<Path>>(&mut self, path: P) -> &mut Self {
         let path = path.as_ref();
         let content = fs::read_to_string(path);
-        let name = path.to_string_lossy().to_string();
+        let name = path.to_string_lossy().into_owned();
 
         self.actual = Some(content);
         self.actual_name = Some(name);
@@ -73,7 +73,7 @@ impl Diff {
 
     /// Specify the actual output for the diff from a given text string.
     pub fn actual_text<T: AsRef<[u8]>>(&mut self, name: &str, text: T) -> &mut Self {
-        self.actual = Some(String::from_utf8_lossy(text.as_ref()).to_string());
+        self.actual = Some(String::from_utf8_lossy(text.as_ref()).into_owned());
         self.actual_name = Some(name.to_string());
         self
     }
